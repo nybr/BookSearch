@@ -28,12 +28,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private EditText searchView;
     private String searchUrl;
 
+    private LoaderManager loaderManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LoaderManager loaderManager = getLoaderManager();
+        loaderManager = getLoaderManager();
 
         if (savedInstanceState != null) {
             Log.i("onCreate", "NOT NULL");
@@ -54,12 +56,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             loaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
         }
 
-
         ListView bookListView = (ListView) findViewById(R.id.list);
         bookListView.setAdapter(mAdapter);
         searchView = (EditText) findViewById(R.id.search_text);
 
-        /* searchView.setOnKeyListener(new View.OnKeyListener() {
+        searchView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
@@ -75,13 +76,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     }
                     searchUrl = searchUrl.concat(MAX_RESULT);
 
-                    LoaderManager loaderManager = getLoaderManager();
-                    loaderManager.initLoader(BOOK_LOADER_ID, null, MainActivity.this);
+                    getLoaderManager().restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
                     return true;
                 }
                 return false;
             }
-        });*/
+        });
     }
 
     @Override
@@ -102,17 +102,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         if(mAdapter !=null){
-            Log.i("onLoadFinished", "clear adapter " + mAdapter.getCount());
-
             mAdapter.clear();
-        }else Log.i("onLoadFinished", "null adapter");
+        }
         if (books != null && !books.isEmpty()) {
-            Log.i("onLoadFinished", books.get(0).getTitle());
             mBooks = (ArrayList<Book>) books;
             mAdapter = new BookAdapter(MainActivity.this, mBooks);
             ListView bookList = (ListView) findViewById(R.id.list);
             bookList.setAdapter(mAdapter);
-            Log.i("onLoadFinished", "set new adapter");
         }else Log.i("onLoadFinished", "books NULL");
 
     }
@@ -126,18 +122,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_ITEMS, mBooks);
+    }
 
-        if (mBooks!=null){
-            Log.i("OnSaveInstanceState", mBooks.get(0).getTitle());
-        }else Log.i("OnSaveInstanceState", "mBooks NULL");
-
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+        mBooks = (ArrayList<Book>) savedInstanceState.getSerializable(STATE_ITEMS);
     }
 
     public void onClickMyFuckingButton(View view) {
 
         mSearch = searchView.getText().toString().split(" ");
 
-        Log.i("onClickMyFuckingButton", searchView.getText().toString());
         searchUrl = BOOKS_REQUEST;
         searchUrl = searchUrl.concat(mSearch[0]);
         for (int i = 1; i < mSearch.length; i++) {
@@ -147,5 +143,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         searchUrl = searchUrl.concat(MAX_RESULT);
         getLoaderManager().restartLoader(BOOK_LOADER_ID, null, MainActivity.this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("onStop", "super.onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

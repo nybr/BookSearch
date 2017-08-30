@@ -178,8 +178,11 @@ final class QueryUtils {
                 String title = volumeInfo.getString("title");
                 String description = volumeInfo.optString("description");
 
+                JSONObject linkImage = volumeInfo.getJSONObject("imageLinks");
+                String image = linkImage.optString("smallThumbnail");
+
                 //Create a new Book object and add to the list
-                books.add(new Book(title, description));
+                books.add(new Book(title, description, image));
             }
 
         } catch (JSONException e) {

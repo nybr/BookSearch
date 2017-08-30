@@ -1,12 +1,15 @@
 package com.udacity.nadjayanna.booksearch;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -23,11 +26,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         // each data item is just a string in this case
         public TextView mTitle;
         public TextView mDescription;
+        public SimpleDraweeView mImage;
 
         public ViewHolder(View v) {
             super(v);
             mTitle = (TextView) v.findViewById(R.id.title);;
             mDescription = (TextView) v.findViewById(R.id.description);
+            mImage = (SimpleDraweeView) v.findViewById(R.id.image);
         }
     }
 
@@ -57,6 +62,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         //replace the contents of the view with that element
         holder.mTitle.setText(mBookList.get(position).getTitle());
         holder.mDescription.setText(mBookList.get(position).getDescription());
+        holder.mImage.setImageURI(Uri.parse(mBookList.get(position).getImage()));
 
     }
 
@@ -66,37 +72,3 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         return mBookList.size();
     }
 }
-
-
-
-
-        /*ArrayAdapter<Book> {
-    BookAdapter(Context context, List<Book> books) {
-        super(context, 0, books);
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-        View itemView = convertView;
-
-        if (itemView == null) {
-            itemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.book, parent, false);
-        }
-
-        Book currentBook = getItem(position);
-
-        if (currentBook != null) {
-            TextView titleView = (TextView) itemView.findViewById(R.id.title);
-            titleView.setText(currentBook.getTitle());
-
-            TextView descriptionView = (TextView) itemView.findViewById(R.id.description);
-            descriptionView.setText(currentBook.getDescription());
-        }
-
-        return itemView;
-
-    }
-}*/

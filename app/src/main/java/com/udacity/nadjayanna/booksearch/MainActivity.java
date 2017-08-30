@@ -17,6 +17,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         loaderManager = getLoaderManager();
+        Fresco.initialize(this);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.getSerializable(ITEMS) != null) {
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             searchUrl = searchUrl.concat(mSearch[i]);
 
                         }
-                        searchUrl = searchUrl.concat(MAX_RESULT);
+                        //searchUrl = searchUrl.concat(MAX_RESULT);
 
                         // If there is a network connection, fetch data
                         if (isConnected()) {

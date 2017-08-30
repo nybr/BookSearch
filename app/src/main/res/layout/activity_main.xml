@@ -34,12 +34,21 @@
             android:text="Button" />
     </LinearLayout>
 
-    <ListView
+    <!--<ListView
         android:id="@+id/list"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/linearLayout" />
+        android:layout_below="@id/linearLayout" />-->
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/books_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:scrollbars="vertical"
+        android:layout_below="@id/linearLayout"/>
 
     <!-- Loading indicator for user feedback between queries to BookAPI -->
     <ProgressBar

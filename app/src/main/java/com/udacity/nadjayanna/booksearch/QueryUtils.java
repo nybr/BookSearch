@@ -27,19 +27,28 @@ import java.util.List;
  * parse the response.
  */
 
-public final class QueryUtils {
+final class QueryUtils {
 
-    /** Tag for the log messages */
-    public static final String LOG_TAG = QueryUtils.class.getSimpleName();
+    /**
+     * Tag for the log messages
+     */
+    private static final String LOG_TAG = QueryUtils.class.getSimpleName();
 
-    private QueryUtils(){}
+    /**
+     * Create a private constructor because no one should ever create a {@link QueryUtils} object.
+     * This class is only meant to hold static variables and methods, which can be accessed
+     * directly from the class name QueryUtils (and an object instance of QueryUtils is not needed).
+     */
+    private QueryUtils() {
+    }
 
-    public static List<Book> fetchBookData(String resquestUrl) {
-
-        List<Book> result = null;
+    /**
+     * Query the BooksAPI and return a list of {@link Book} objects.
+     */
+    static List<Book> fetchBookData(String requestUrl) {
 
         // Create URL object
-        URL url = createUrl (resquestUrl);
+        URL url = createUrl(requestUrl);
 
         // Perform HTTP request to the URL and receive a JSON response back
         String jsonResponse = null;
@@ -48,16 +57,14 @@ public final class QueryUtils {
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
-
-        result = extractBooks(jsonResponse);
-
-        return result;
+        // return a list of Books with relevant fields from the JSON response
+        return extractBooks(jsonResponse);
     }
 
     /**
      * Make an HTTP request to the given URL and return a String as the response.
      */
-    private static String makeHttpRequest(URL url) throws IOException{
+    private static String makeHttpRequest(URL url) throws IOException {
 
         String jsonResponse = "";
 
@@ -91,6 +98,9 @@ public final class QueryUtils {
                 urlConnection.disconnect();
             }
             if (inputStream != null) {
+                // Closing the input stream could throw an IOException, which is why
+                // the makeHttpRequest(URL url) method signature specifies than an IOException
+                // could be thrown.
                 inputStream.close();
             }
         }
@@ -101,7 +111,7 @@ public final class QueryUtils {
      * Convert the {@link InputStream} into a String which contains the
      * whole JSON response from the server.
      */
-    private static String readFromStream(InputStream inputStream) throws IOException{
+    private static String readFromStream(InputStream inputStream) throws IOException {
 
         StringBuilder output = new StringBuilder();
         if (inputStream != null) {
@@ -113,7 +123,8 @@ public final class QueryUtils {
                 line = reader.readLine();
             }
         }
-        return output.toString();    }
+        return output.toString();
+    }
 
     /**
      * Returns new URL object from the given string URL.
@@ -132,38 +143,53 @@ public final class QueryUtils {
      * Return a list of {@link Book} objects that has been built up from
      * parsing a JSON response.
      */
-    public static ArrayList<Book> extractBooks (String bookJSON){
+    private static ArrayList<Book> extractBooks(String bookJSON) {
 
-        if (TextUtils.isEmpty(bookJSON)){
+        // If the JSON string is empty or null, then return early.
+        if (TextUtils.isEmpty(bookJSON)) {
             return null;
         }
 
-        //Create an empty ArrayList to start adding books to
+        //Create an empty ArrayList that we can start adding books to
         ArrayList<Book> books = new ArrayList<>();
 
-        //Tr to parse the JSON. If there's a problem a JSONException will be thrown.
+        //Try to parse the JSON. If there's a problem a JSONException will be thrown.
         try {
 
+            // Create a JSONObject from the JSON response string
             JSONObject baseJsonResponse = new JSONObject(bookJSON);
+
+            // Extract the JSONArray associated with the key called "items",
+            // which represents a list of books.
             JSONArray bookArray = baseJsonResponse.getJSONArray("items");
 
-            //looping through all books
-            for (int i=0; i<bookArray.length(); i++){
+            // For each book in the bookArray, create an {@link Book} object
+            for (int i = 0; i < bookArray.length(); i++) {
+
+                // Get a single book at position i within the list of books
                 JSONObject currentBook = bookArray.getJSONObject(i);
+
+                // For a given book, extract the JSONObject associated with the
+                // key called "volumeInfo", which represents a list of all information
+                // for that book.
                 JSONObject volumeInfo = currentBook.getJSONObject("volumeInfo");
 
+                //Extracting information from the volumeInfo
                 String title = volumeInfo.getString("title");
                 String description = volumeInfo.optString("description");
 
-                //JSONObject linkImagem = volumeInfo.getJSONObject("imageLinks");
-                //String imageLink = linkImagem.optString("smallThumbnail");
-
-                books.add(new Book(title,description));
+                //Create a new Book object and add to the list
+                books.add(new Book(title, description));
             }
 
-        }catch (JSONException e){
+        } catch (JSONException e) {
+            // If an error is thrown when executing any of the above statements in the "try" block,
+            // catch the exception here, so the app doesn't crash. Print a log message
+            // with the message from the exception.
             Log.e(LOG_TAG, "Problem parsing the book JSON results", e);
         }
+
+        //return the list of books
         return books;
     }
 

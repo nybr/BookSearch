@@ -25,7 +25,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
 
     private static final String BOOKS_REQUEST = "https://www.googleapis.com/books/v1/volumes?q=";
-    private static final String MAX_RESULT = "&maxResults=10";
+    private static final String MAX_RESULT = "&maxResults=10&orderBy=newest";
     private static final int BOOK_LOADER_ID = 1;
     private static final String ITEMS = "items";
     private static final String EMPTY_STATE = "empty";

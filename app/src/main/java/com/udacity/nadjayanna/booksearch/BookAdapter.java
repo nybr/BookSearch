@@ -1,11 +1,13 @@
 package com.udacity.nadjayanna.booksearch;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,18 +22,21 @@ import java.util.List;
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
     private List<Book> mBookList;
-
     // Provide a reference to the view for each book in the list
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView mTitle;
         public TextView mDescription;
+        public TextView mAuthor;
         public SimpleDraweeView mImage;
+        public Button mBuyLink;
+
 
         public ViewHolder(View v) {
             super(v);
             mTitle = (TextView) v.findViewById(R.id.title);;
             mDescription = (TextView) v.findViewById(R.id.description);
+            mAuthor = (TextView) v.findViewById(R.id.author);
             mImage = (SimpleDraweeView) v.findViewById(R.id.image);
         }
     }
@@ -41,6 +46,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
     public BookAdapter(List<Book> mBookList) {
         this.mBookList = mBookList;
     }
+
+
 
     // Create new views (invoked by the layout manager)
     @Override
@@ -56,12 +63,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(BookAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final BookAdapter.ViewHolder holder, final int position) {
 
         //get element from the list od books at this position
         //replace the contents of the view with that element
         holder.mTitle.setText(mBookList.get(position).getTitle());
         holder.mDescription.setText(mBookList.get(position).getDescription());
+        holder.mAuthor.setText(mBookList.get(position).getAuthor());
         holder.mImage.setImageURI(Uri.parse(mBookList.get(position).getImage()));
 
     }

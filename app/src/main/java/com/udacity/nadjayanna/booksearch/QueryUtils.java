@@ -181,8 +181,22 @@ final class QueryUtils {
                 JSONObject linkImage = volumeInfo.getJSONObject("imageLinks");
                 String image = linkImage.optString("smallThumbnail");
 
+                JSONArray authorArray = volumeInfo.optJSONArray("authors");
+                String authors="";
+                if(authorArray != null){
+                    authors = authorArray.getString(0);
+                    for (int j=1; j<authorArray.length();j++){
+                        authors = authors.concat(", ");
+                        authors = authors.concat(authorArray.getString(j));
+                    }
+                }
+
+                JSONObject saleInfo = currentBook.getJSONObject("saleInfo");
+
+                String buyLink = saleInfo.optString("buyLink");
+
                 //Create a new Book object and add to the list
-                books.add(new Book(title, description, image));
+                books.add(new Book(title, description, image, authors, buyLink));
             }
 
         } catch (JSONException e) {
